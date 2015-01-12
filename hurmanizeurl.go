@@ -3,10 +3,16 @@ package humanizeurl
 import (
 	"net/url"
 	"strings"
+
+	"github.com/sekimura/go-normalize-url"
 )
 
-func humanize(s string) (string, error) {
+func Humanize(s string) (string, error) {
 	s = strings.TrimSpace(s)
+	s, err := normalizeurl.Normalize(s)
+	if err != nil {
+		return s, err
+	}
 
 	u, err := url.Parse(s)
 	if err != nil {
@@ -17,10 +23,6 @@ func humanize(s string) (string, error) {
 	if strings.HasPrefix(u.Scheme, "http") {
 		h = strings.TrimPrefix(h, u.Scheme+"://")
 	}
-
-	h = strings.TrimPrefix(h, "www.")
-
-	h = strings.TrimSuffix(h, "/")
 
 	return h, nil
 }
